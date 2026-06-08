@@ -68,7 +68,7 @@ class _GeneratedFormModalState extends State<GeneratedFormModal> {
       ),
       actions: [
         TextButton(
-          autofocus: context.read<SettingsProvider>().isTV,
+          autofocus: true,
           onPressed: () {
             Navigator.of(context).pop(null);
           },

@@ -32,17 +32,6 @@ class _ImportExportPageState extends State<ImportExportPage> {
     var appsProvider = context.watch<AppsProvider>();
     var settingsProvider = context.watch<SettingsProvider>();
 
-    var outlineButtonStyle = ButtonStyle(
-      shape: WidgetStateProperty.all(
-        StadiumBorder(
-          side: BorderSide(
-            width: 1,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-        ),
-      ),
-    );
-
     urlListImport({String? initValue, bool overrideInitValid = false}) {
       showDialog<Map<String, dynamic>?>(
         context: context,
@@ -384,115 +373,29 @@ class _ImportExportPageState extends State<ImportExportPage> {
               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  if (!settingsProvider.isTV)
-                    FutureBuilder(
-                      future: settingsProvider.getExportDir(),
-                      builder: (context, snapshot) {
-                        return Column(
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: TextButton(
-                                    style: outlineButtonStyle,
-                                    onPressed: importInProgress
-                                        ? null
-                                        : () {
-                                            runObtainiumExport(pickOnly: true);
-                                          },
-                                    child: Text(
-                                      tr('pickExportDir'),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 16),
-                                Expanded(
-                                  child: TextButton(
-                                    style: outlineButtonStyle,
-                                    onPressed:
-                                        importInProgress ||
-                                            snapshot.data == null
-                                        ? null
-                                        : runObtainiumExport,
-                                    child: Text(
-                                      tr('obtainiumExport'),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: TextButton(
-                                    style: outlineButtonStyle,
-                                    onPressed: importInProgress
-                                        ? null
-                                        : runObtainiumImport,
-                                    child: Text(
-                                      tr('obtainiumImport'),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            if (snapshot.data != null)
-                              Column(
-                                children: [
-                                  const SizedBox(height: 16),
-                                  GeneratedForm(
-                                    items: [
-                                      [
-                                        GeneratedFormSwitch(
-                                          'autoExportOnChanges',
-                                          label: tr('autoExportOnChanges'),
-                                          defaultValue: settingsProvider
-                                              .autoExportOnChanges,
-                                        ),
-                                      ],
-                                      [
-                                        GeneratedFormDropdown(
-                                          'exportSettings',
-                                          [
-                                            MapEntry('0', tr('none')),
-                                            MapEntry('1', tr('excludeSecrets')),
-                                            MapEntry('2', tr('all')),
-                                          ],
-                                          label: tr('includeSettings'),
-                                          defaultValue: settingsProvider
-                                              .exportSettings
-                                              .toString(),
-                                        ),
-                                      ],
-                                    ],
-                                    onValueChanges: (value, valid, isBuilding) {
-                                      if (valid && !isBuilding) {
-                                        if (value['autoExportOnChanges'] !=
-                                            null) {
-                                          settingsProvider.autoExportOnChanges =
-                                              value['autoExportOnChanges'] ==
-                                              true;
-                                        }
-                                        if (value['exportSettings'] != null) {
-                                          settingsProvider.exportSettings =
-                                              int.parse(
-                                                value['exportSettings'],
-                                              );
-                                        }
-                                      }
-                                    },
-                                  ),
-                                ],
-                              ),
-                          ],
-                        );
-                      },
-                    ),
+                  children: [
+                  TextButton(
+                    onPressed: importInProgress
+                        ? null
+                        : () {
+                            runObtainiumExport(pickOnly: true);
+                          },
+                    child: Text(tr('pickExportDir')),
+                  ),
+                  const SizedBox(height: 8),
+                  TextButton(
+                    onPressed: importInProgress
+                        ? null
+                        : runObtainiumExport,
+                    child: Text(tr('obtainiumExport')),
+                  ),
+                  const SizedBox(height: 8),
+                  TextButton(
+                    onPressed: importInProgress
+                        ? null
+                        : runObtainiumImport,
+                    child: Text(tr('obtainiumImport')),
+                  ),
                   if (importInProgress)
                     const Column(
                       children: [
@@ -561,11 +464,10 @@ class _ImportExportPageState extends State<ImportExportPage> {
                           child: Text(tr('importFromURLList')),
                         ),
                         const SizedBox(height: 8),
-                        if (!settingsProvider.isTV)
-                          TextButton(
-                            onPressed: importInProgress ? null : runUrlImport,
-                            child: Text(tr('importFromURLsInFile')),
-                          ),
+                        TextButton(
+                          onPressed: importInProgress ? null : runUrlImport,
+                          child: Text(tr('importFromURLsInFile')),
+                        ),
                       ],
                     ),
                   ...sourceProvider.massUrlSources.map(
@@ -724,7 +626,6 @@ class _SelectionModalState extends State<SelectionModal> {
 
   @override
   Widget build(BuildContext context) {
-    final isTV = context.read<SettingsProvider>().isTV;
     Map<MapEntry<String, List<String>>, bool> filteredEntrySelections = {};
     entrySelections.forEach((key, value) {
       var searchableText = key.value.isEmpty ? key.key : key.value[0];
@@ -887,13 +788,7 @@ class _SelectionModalState extends State<SelectionModal> {
                     ? null
                     : selectedEntries.first.key.key,
                 onChanged: (value) {
-                  if (isTV) {
-                    Navigator.of(context).pop([entry.key]);
-                  } else {
-                    setState(() {
-                      selectOnlyOne(entry.key);
-                    });
-                  }
+                  Navigator.of(context).pop([entry.key]);
                 },
               ),
             );
@@ -940,7 +835,7 @@ class _SelectionModalState extends State<SelectionModal> {
                 ? singleSelectTile
                 : multiSelectTile;
           }),
-          if (isTV && !widget.onlyOneSelectionAllowed) ...[
+          if (!widget.onlyOneSelectionAllowed) ...[
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -978,7 +873,7 @@ class _SelectionModalState extends State<SelectionModal> {
       actions: [
         getSelectAllButton(),
         TextButton(
-          autofocus: isTV,
+          autofocus: true,
           onPressed: () {
             Navigator.of(context).pop();
           },

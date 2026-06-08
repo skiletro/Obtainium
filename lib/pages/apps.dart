@@ -467,62 +467,6 @@ class AppsPageState extends State<AppsPage> {
       );
     }
 
-    getAppIcon(int appIndex) {
-      return InkWell(
-        child: FutureBuilder(
-          future: appsProvider.updateAppIcon(listedApps[appIndex].app.id),
-          builder: (ctx, val) {
-            return listedApps[appIndex].icon != null
-                ? Image.memory(
-                    listedApps[appIndex].icon!,
-                    gaplessPlayback: true,
-                    opacity: AlwaysStoppedAnimation(
-                      listedApps[appIndex].installedInfo == null ? 0.6 : 1,
-                    ),
-                  )
-                : Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Transform(
-                        alignment: Alignment.center,
-                        transform: Matrix4.rotationZ(0.31),
-                        child: Padding(
-                          padding: const EdgeInsets.all(15),
-                          child: Image(
-                            image: const AssetImage(
-                              'assets/graphics/icon_small.png',
-                            ),
-                            color:
-                                Theme.of(context).brightness == Brightness.dark
-                                ? Colors.white.withOpacity(0.4)
-                                : Colors.white.withOpacity(0.3),
-                            colorBlendMode: BlendMode.modulate,
-                            gaplessPlayback: true,
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-          },
-        ),
-        onDoubleTap: () {
-          pm.openApp(listedApps[appIndex].app.id);
-        },
-        onLongPress: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AppPage(
-                appId: listedApps[appIndex].app.id,
-                showOppositeOfPreferredView: true,
-              ),
-            ),
-          );
-        },
-      );
-    }
-
     getVersionText(int appIndex) {
       return listedApps[appIndex].app.installedVersion ?? tr('notInstalled');
     }
@@ -681,7 +625,7 @@ class AppsPageState extends State<AppsPage> {
           ),
         ),
         child: ListTile(
-          autofocus: index == 0 && settingsProvider.isTV,
+          autofocus: index == 0,
           tileColor: listedApps[index].app.pinned
               ? Colors.grey.withOpacity(0.1)
               : Colors.transparent,
@@ -694,14 +638,31 @@ class AppsPageState extends State<AppsPage> {
           onLongPress: () {
             toggleAppSelected(listedApps[index].app);
           },
-          leading: (settingsProvider.isTV)
-              ? Checkbox(
-                  value: selectedAppIds.contains(listedApps[index].app.id),
-                  onChanged: (_) {
-                    toggleAppSelected(listedApps[index].app);
-                  },
-                )
-              : getAppIcon(index),
+          leading: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: SizedBox(
+                  width: 36,
+                  height: 36,
+                  child: listedApps[index].icon != null
+                      ? Image.memory(
+                          listedApps[index].icon!,
+                          gaplessPlayback: true,
+                        )
+                      : Icon(Icons.apps),
+                ),
+              ),
+              const SizedBox(width: 4),
+              Checkbox(
+                value: selectedAppIds.contains(listedApps[index].app.id),
+                onChanged: (_) {
+                  toggleAppSelected(listedApps[index].app);
+                },
+              ),
+            ],
+          ),
           title: Text(
             maxLines: 1,
             listedApps[index].name,

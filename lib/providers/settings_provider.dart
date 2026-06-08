@@ -29,7 +29,6 @@ class SettingsProvider with ChangeNotifier {
   SharedPreferences? prefs;
   String? defaultAppDir;
   bool justStarted = true;
-  bool isTV = false;
 
   String sourceUrl = 'https://github.com/ImranR98/Obtainium';
 
@@ -38,8 +37,6 @@ class SettingsProvider with ChangeNotifier {
     prefs = await SharedPreferences.getInstance();
     defaultAppDir = (await getAppStorageDir()).path;
     final info = await DeviceInfoPlugin().androidInfo;
-    isTV = info.systemFeatures.contains('android.hardware.type.television') ||
-        info.systemFeatures.contains('android.software.leanback');
     notifyListeners();
   }
 

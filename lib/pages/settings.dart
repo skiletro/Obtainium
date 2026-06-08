@@ -315,56 +315,47 @@ class _SettingsPageState extends State<SettingsPage> {
       },
     );
 
-    final Widget intervalSlider = settingsProvider.isTV
-        ? Row(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.remove),
-                onPressed: settingsProvider.updateIntervalSliderVal <= 0
-                    ? null
-                    : () {
-                        setState(() {
-                          final newVal =
-                              (settingsProvider.updateIntervalSliderVal - 1)
-                                  .clamp(
-                                    0.0,
-                                    updateIntervalNodes.length.toDouble(),
-                                  );
-                          settingsProvider.updateIntervalSliderVal = newVal;
-                          processIntervalSliderValue(newVal);
-                          settingsProvider.updateInterval = updateInterval;
-                        });
-                      },
-              ),
-              Expanded(
-                child: Text(
-                  updateIntervalLabel,
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.add),
-                onPressed:
-                    settingsProvider.updateIntervalSliderVal >=
-                            updateIntervalNodes.length.toDouble()
-                        ? null
-                        : () {
-                            setState(() {
-                              final newVal =
-                                  (settingsProvider.updateIntervalSliderVal + 1)
-                                      .clamp(
-                                        0.0,
-                                        updateIntervalNodes.length.toDouble(),
-                                      );
-                              settingsProvider.updateIntervalSliderVal = newVal;
-                              processIntervalSliderValue(newVal);
-                              settingsProvider.updateInterval = updateInterval;
-                            });
-                          },
-              ),
-            ],
-          )
-        : rawSlider;
+    final Widget intervalSlider = Row(
+      children: [
+        IconButton(
+          icon: const Icon(Icons.remove),
+          onPressed: settingsProvider.updateIntervalSliderVal <= 0
+              ? null
+              : () {
+                  setState(() {
+                    final newVal =
+                        (settingsProvider.updateIntervalSliderVal - 1).clamp(
+                          0.0,
+                          updateIntervalNodes.length.toDouble(),
+                        );
+                    settingsProvider.updateIntervalSliderVal = newVal;
+                    processIntervalSliderValue(newVal);
+                    settingsProvider.updateInterval = updateInterval;
+                  });
+                },
+        ),
+        Expanded(child: Text(updateIntervalLabel, textAlign: TextAlign.center)),
+        IconButton(
+          icon: const Icon(Icons.add),
+          onPressed:
+              settingsProvider.updateIntervalSliderVal >=
+                  updateIntervalNodes.length.toDouble()
+              ? null
+              : () {
+                  setState(() {
+                    final newVal =
+                        (settingsProvider.updateIntervalSliderVal + 1).clamp(
+                          0.0,
+                          updateIntervalNodes.length.toDouble(),
+                        );
+                    settingsProvider.updateIntervalSliderVal = newVal;
+                    processIntervalSliderValue(newVal);
+                    settingsProvider.updateInterval = updateInterval;
+                  });
+                },
+        ),
+      ],
+    );
 
     var sourceSpecificFields = sourceProvider.sources.map((e) {
       if (e.sourceConfigSettingFormItems.isNotEmpty) {
@@ -687,11 +678,14 @@ class _SettingsPageState extends State<SettingsPage> {
                                   ShizukuApkInstaller().checkPermission().then((
                                     resCode,
                                   ) {
-                                    settingsProvider.useShizuku = resCode!.startsWith('granted');
+                                    settingsProvider.useShizuku = resCode!
+                                        .startsWith('granted');
                                     switch (resCode) {
                                       case 'services_not_found':
                                         showError(
-                                          ObtainiumError(tr('shizukuBinderNotFound')),
+                                          ObtainiumError(
+                                            tr('shizukuBinderNotFound'),
+                                          ),
                                           context,
                                         );
                                       case 'old_shizuku':
@@ -701,7 +695,9 @@ class _SettingsPageState extends State<SettingsPage> {
                                         );
                                       case 'old_android_with_adb':
                                         showError(
-                                          ObtainiumError(tr('shizukuOldAndroidWithADB')),
+                                          ObtainiumError(
+                                            tr('shizukuOldAndroidWithADB'),
+                                          ),
                                           context,
                                         );
                                       case 'denied':
@@ -810,25 +806,31 @@ class _SettingsPageState extends State<SettingsPage> {
                           builder: (ctx, val) {
                             return (val.data?.version.sdkInt ?? 0) >= 29
                                 ? Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       height16,
                                       Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Flexible(
                                             child: Text(tr('useSystemFont')),
                                           ),
                                           Switch(
-                                            value: settingsProvider.useSystemFont,
+                                            value:
+                                                settingsProvider.useSystemFont,
                                             onChanged: (useSystemFont) {
                                               if (useSystemFont) {
                                                 NativeFeatures.loadSystemFont()
                                                     .then((val) {
-                                                      settingsProvider.useSystemFont = true;
+                                                      settingsProvider
+                                                              .useSystemFont =
+                                                          true;
                                                     });
                                               } else {
-                                                settingsProvider.useSystemFont = false;
+                                                settingsProvider.useSystemFont =
+                                                    false;
                                               }
                                             },
                                           ),

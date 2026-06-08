@@ -275,10 +275,7 @@ class _TVTextFieldFocus extends StatefulWidget {
   final Widget child;
   final FocusNode textFocusNode;
 
-  const _TVTextFieldFocus({
-    required this.child,
-    required this.textFocusNode,
-  });
+  const _TVTextFieldFocus({required this.child, required this.textFocusNode});
 
   @override
   State<_TVTextFieldFocus> createState() => _TVTextFieldFocusState();
@@ -423,13 +420,10 @@ class _GeneratedFormState extends State<GeneratedForm> {
                   return null;
                 },
               );
-              if (context.read<SettingsProvider>().isTV) {
-                return _TVTextFieldFocus(
-                  textFocusNode: focusNode,
-                  child: textField,
-                );
-              }
-              return textField;
+              return _TVTextFieldFocus(
+                textFocusNode: focusNode,
+                child: textField,
+              );
             },
             itemBuilder: (context, value) {
               return ListTile(title: Text(value));
